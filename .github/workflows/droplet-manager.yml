@@ -107,10 +107,20 @@ jobs:
         DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
       run: |
         echo "Listing all proxy droplets..."
+        # First try to get by tag
+        echo "=== Droplets with tag 'proxy': ==="
         curl -s -X GET \
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer $DO_API_TOKEN" \
           "https://api.digitalocean.com/v2/droplets?tag_name=proxy" | jq '.'
+        
+        # Then try to get by name pattern
+        echo -e "\n=== All droplets (checking names): ==="
+        curl -s -X GET \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $DO_API_TOKEN" \
+          "https://api.digitalocean.com/v2/droplets" | \
+          jq '[.droplets[] | select(.name | contains("proxy") or contains("Proxy"))] | {droplets: ., total: length}'
 
     - name: Manual - Create Droplet
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.operation == 'create'
