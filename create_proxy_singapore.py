@@ -77,7 +77,7 @@ def get_droplet_ip(droplet_id):
     url = f"https://api.digitalocean.com/v2/droplets/{droplet_id}"
     headers = {"Authorization": f"Bearer {DO_API_TOKEN}"}
 
-    for _ in range(30):
+    for _ in range(60):
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         networks = response.json()["droplet"]["networks"]
