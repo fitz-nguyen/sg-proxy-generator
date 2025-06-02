@@ -1,5 +1,8 @@
 name: DigitalOcean Droplet Manager
 
+# This will show up in the Actions tab
+# The actual name will be set in the job using environment variables
+
 on:
   # Run automatically at 8:30 AM Vietnam time (GMT+7) every day
   schedule:
@@ -30,6 +33,8 @@ on:
 jobs:
   manage-droplet:
     runs-on: ubuntu-latest
+    # Set a custom name for the workflow run
+    name: ${{ github.event_name == 'schedule' && 'Scheduled Run' || 'Manual Run' }} - ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.operation || 'create' }}
     
     steps:
     - name: Checkout repository
